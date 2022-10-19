@@ -1,13 +1,50 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        x:Class="Avalonia.NETCoreApp1.Views.MainWindow"
-        xmlns:viewModels="clr-namespace:Avalonia.NETCoreApp1.ViewModels"
-        Title="Window with Button"
-        Width="300" Height="300">
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:Avalonia.NETCoreApp1.ViewModels"
+        xmlns:uc="clr-namespace:Avalonia.NETCoreApp1.UserControls"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        Width="800" Height="450"
+        x:Class="Avalonia.NETCoreApp1.MainWindow"
+        Title="Avalonia.NETCoreApp2">
   <Window.DataContext>
-    <viewModels:MainWindowViewModel />
+    <vm:MainViewModel />
   </Window.DataContext>
-  <StackPanel Margin="10">
-    <TextBlock Text="{Binding Path=MyAsyncText^, FallbackValue='Wait a second', Mode=OneWay}" />
-  </StackPanel>
+
+  <Grid RowDefinitions="*,*">
+    <StackPanel Grid.Row="0">
+      <TextBlock Text="ListBox,No delays" />
+      <Grid ColumnDefinitions="*,*">
+        <ListBox Grid.Column="0" x:Name="MyListBox" SelectionMode="Single"
+                 SelectionChanged="MyListBox_OnSelectionChanged"
+                 Items="{Binding TreeViewModels1, Mode=OneWay}">
+          <ListBox.ItemTemplate>
+            <DataTemplate DataType="{x:Type vm:TreeViewModel}">
+              <Border>
+                <TextBlock Text="{Binding Name, Mode=OneWay}" />
+              </Border>
+            </DataTemplate>
+          </ListBox.ItemTemplate>
+        </ListBox>
+        <uc:KeyDetailPage Grid.Column="1" DataContext="{Binding ElementName=MyListBox, Path=SelectedItem, Mode=OneWay}" />
+      </Grid>
+      <TextBlock Text="TreeView,Delay" Margin="0 10 0 0" />
+      <Grid ColumnDefinitions="*,*">
+        <TreeView Grid.Column="0" x:Name="MyTreeView"
+                  SelectionMode="Single"
+                  SelectionChanged="MyTreeView_OnSelectionChanged"
+                  Items="{Binding  TreeViewModels2, Mode=OneWay}">
+          <TreeView.ItemTemplate>
+            <TreeDataTemplate ItemsSource="{Binding SubFolders}">
+              <Border>
+                <TextBlock Text="{Binding Name, Mode=OneWay}" />
+              </Border>
+            </TreeDataTemplate>
+          </TreeView.ItemTemplate>
+        </TreeView>
+        <uc:KeyDetailPage Grid.Column="1" DataContext="{Binding ElementName=MyTreeView, Path=SelectedItem, Mode=OneWay}" />
+      </Grid>
+    </StackPanel>
+  </Grid>
 </Window>
